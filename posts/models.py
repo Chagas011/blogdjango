@@ -1,15 +1,35 @@
-
+from django.db.models import Q, Count, Case, When
 from django.db import models
 from categorias.models import Categoria
 from django.contrib.auth.models import User
 from django.utils import timezone
-from PIL import Image
-from django.conf import settings
-import os
+
 # Create your models here.
 
 
+class PostsManager(models.Manager):
+    def get_published(self):
+        return self.filter(
+            publicado_post=True
+        ).annotate(
+            numero_comentarios=Count(
+                Case(
+                    When(comentario__publicado_comentario=True, then=1)
+                )
+            )
+        ).order_by('-id')
+
+    def get_busca(self, termo):
+        return self.filter(
+            Q(titulo_post__icontains=termo) |
+            Q(autor_post__first_name__iexact=termo) |
+            Q(conteudo_post__icontains=termo) |
+            Q(categoria_post__nome_cat__iexact=termo)
+        )
+
+
 class Post(models.Model):
+    objects = PostsManager()
     titulo_post = models.CharField(max_length=255, verbose_name='Titulo')
     autor_post = models.ForeignKey(
         User, on_delete=models.DO_NOTHING, verbose_name='Autor')
@@ -29,26 +49,3 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return self.titulo_post
-
-    def save(self, *args, **kwargs):
-        super.save(*args, **kwargs)
-        self.resize_image(self.imagem_post.name, 800)
-
-    @staticmethod
-    def resize_image(name_image, new_width):
-        img_path = os.path.join(settings.MEDIA_ROOT, name_image)
-        img = Image.open(img_path)
-        width, heigth = img.size
-        new_heigth = round((new_width * heigth) / width)
-
-        if width <= new_width:
-            img.close()
-            return
-
-        new_img = img.resize((new_width, new_heigth), Image.ANTIALIAS)
-        new_img.save(
-            img_path,
-            optimize=True,
-            quality=60
-        )
-        new_img.close()

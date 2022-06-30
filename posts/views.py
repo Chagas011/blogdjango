@@ -2,32 +2,27 @@
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views import View
 from django.views.generic.list import ListView
+from django.views.generic.edit import FormView
 from .models import Post
-from django.db.models import Q, Count, Case, When
+from .forms import FormPost
 from comentarios.forms import FormComentario
 from comentarios.models import Comentario
+
 from django.contrib import messages
+
 # Create your views here.
 
 
 class PostIndex(ListView):
     model = Post
     template_name = 'posts/index.html'
-    paginate_by = 2
+    paginate_by = 3
     context_object_name = 'posts'
 
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.select_related('categoria_post')
-        qs = qs.order_by('-id').filter(publicado_post=True)
-        qs = qs.annotate(
-            numero_comentarios=Count(
-                Case(
-                    When(comentario__publicado_comentario=True, then=1)
-                )
-            )
-        )
-
+        qs = self.model.objects.get_published()
         return qs
 
 
@@ -40,12 +35,7 @@ class PostBusca(PostIndex):
 
         if not termo:
             return qs
-        qs = qs.filter(
-            Q(titulo_post__icontains=termo) |
-            Q(autor_post__first_name__iexact=termo) |
-            Q(conteudo_post__icontains=termo) |
-            Q(categoria_post__nome_cat__iexact=termo)
-        )
+        qs = self.model.objects.get_busca(termo)
 
         return qs
 
@@ -96,7 +86,24 @@ class PostDetalhes(View):
         return redirect('post_detalhes', pk=self.kwargs.get('pk'))
 
 
+class PostFormulario(FormView):
+    template_name = 'posts/post_formulario.html'
+    model = Post
+    form_class = FormPost
+
+    def form_valid(self, form):
+        post = Post(**form.cleaned_data)
+        if self.request.user.is_authenticated:
+            post.autor_post = self.request.user
+        post.save()
+        messages.success(self.request, 'Post enviado com sucesso')
+        return redirect('post_index')
+
+
 """
+
+
+
 class PostDetalhes(UpdateView):
     template_name = 'posts/post_detalhes.html'
     model = Post
