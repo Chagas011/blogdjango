@@ -9,4 +9,6 @@ urlpatterns = [
     path('posts/<int:pk>', views.PostDetalhes.as_view(), name='post_detalhes'),
     path('posts/formulario',
          views.PostFormulario.as_view(), name='post_forms'),
+    path('register', views.register_view, name='register'),
+    path('register/create', views.register_create, name='register_create'),
 ]

@@ -1,5 +1,8 @@
 
+
+from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse
 from django.views import View
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormView
@@ -7,6 +10,7 @@ from .models import Post
 from .forms import FormPost
 from comentarios.forms import FormComentario
 from comentarios.models import Comentario
+from .forms import RegisterForm
 
 from django.contrib import messages
 
@@ -98,6 +102,35 @@ class PostFormulario(FormView):
         post.save()
         messages.success(self.request, 'Post enviado com sucesso')
         return redirect('post_index')
+
+
+def register_view(request):
+    register_form_data = request.session.get('register_form_data', None)
+    form = RegisterForm(register_form_data)
+
+    return render(request, 'posts/register_view.html', context={
+        'form': form,
+        'form_action': reverse('register_create')
+    })
+
+
+def register_create(request):
+    if not request.POST:
+        raise Http404()
+
+    POST = request.POST
+    request.session['register_form_data'] = POST
+    form = RegisterForm(POST)
+
+    if form.is_valid():
+        user = form.save(commit=False)
+        user.set_password(user.password)
+        user.save()
+        messages.success(request, 'Usuario criado com sucesso')
+        del(request.session['register_form_data'])
+        return redirect(reverse('post_index'))
+
+    return redirect('register')
 
 
 """
