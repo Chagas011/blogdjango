@@ -11,9 +11,11 @@ from .forms import FormPost
 from comentarios.forms import FormComentario
 from comentarios.models import Comentario
 from .forms import RegisterForm
-
+from .forms import LoginForm
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 # Create your views here.
 
 
@@ -90,6 +92,9 @@ class PostDetalhes(View):
         return redirect('post_detalhes', pk=self.kwargs.get('pk'))
 
 
+@method_decorator(
+    login_required(
+        login_url='login_form', redirect_field_name='next'), name='dispatch')
 class PostFormulario(FormView):
     template_name = 'posts/post_formulario.html'
     model = Post
@@ -128,9 +133,49 @@ def register_create(request):
         user.save()
         messages.success(request, 'Usuario criado com sucesso')
         del(request.session['register_form_data'])
-        return redirect(reverse('post_index'))
+        return redirect(reverse('login_form'))
 
     return redirect('register')
+
+
+def login_view(request):
+    form = LoginForm()
+    return render(request, 'posts/login.html', context={
+        'form': form,
+        'form_action': reverse('login_create'),
+    })
+
+
+def login_create(request):
+    if not request.POST:
+        raise Http404()
+
+    form = LoginForm(request.POST)
+
+    if form.is_valid():
+        authenticated_user = authenticate(
+            request,
+            username=form.cleaned_data.get('username', ''),
+            password=form.cleaned_data.get('password', ''),
+        )
+
+        if authenticated_user is not None:
+            messages.success(request, 'Logado com sucesso')
+            login(request, authenticated_user)
+            redirect(reverse('post_index'))
+        else:
+            messages.error(request, 'Usuario ou senha invalidos')
+
+    else:
+        messages.error(request, 'Dados invalidos')
+
+    return redirect('login_form')
+
+
+@login_required(login_url='login_form', redirect_field_name='next')
+def logout_view(request):
+    logout(request)
+    return redirect('login_form')
 
 
 """

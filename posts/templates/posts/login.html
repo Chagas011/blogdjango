@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block conteudo %}
+<div class="container mx-auto">
+
+    <div class="mx-auto">
+    <h1>Login</h1>
+{% if request.user.is_authenticated %}
+    <p> Voce esta logado com {{request.user.username}}. 
+         <a href="{% url 'logout' %}"> Clique aqui </a></p> para sair 
+{% endif %}
+</div>
+</div>
+
+
+{% if not request.user.is_authenticated %}
+<form method="POST" action="{{form_action}}">
+    {% csrf_token %}
+        {% for invisivels in form.hidden_fields %}
+            {{invisivels}}
+        {% endfor %}
+    {% for visivel in form.visible_fields %}
+            {{visivel | as_crispy_field}}
+            {{visivel.errors}}
+
+    {% endfor %}
+            {% include  'partials/_messages.html' %}
+            <input type="submit" class="btn btn-primary"
+                    value="Enviar">
+            
+</form>
+<a href="{% url 'register' %}">
+<input type="submit" class="btn btn-primary mt-3" value="Registrar - se">
+</a>
+{% endif %}
+{% endblock conteudo %}
