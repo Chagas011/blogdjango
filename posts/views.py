@@ -97,13 +97,26 @@ class PostDetalhes(View):
         login_url='login_form', redirect_field_name='next'), name='dispatch')
 class PostFormulario(FormView):
     template_name = 'posts/post_formulario.html'
-    model = Post
-    form_class = FormPost
 
-    def form_valid(self, form):
-        post = Post(**form.cleaned_data)
+    def setup(self, request, *args, **kwargs) -> None:
+        super().setup(request, *args, **kwargs)
+        self.contexto = {
+            'form': FormPost(request.POST, request.FILES)
+        }
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.contexto)
+
+    def post(self, request, *args, **kwargs):
+        form = FormPost(request.POST, request.FILES)
+
+        if not form.is_valid():
+            return render(request, self.template_name, self.contexto)
+
+        post = form.save(commit=False)
         if self.request.user.is_authenticated:
             post.autor_post = self.request.user
+
         post.save()
         messages.success(self.request, 'Post enviado com sucesso')
         return redirect('post_index')
@@ -162,7 +175,7 @@ def login_create(request):
         if authenticated_user is not None:
             messages.success(request, 'Logado com sucesso')
             login(request, authenticated_user)
-            redirect(reverse('post_index'))
+            return redirect(reverse('dashboard'))
         else:
             messages.error(request, 'Usuario ou senha invalidos')
 
@@ -178,32 +191,16 @@ def logout_view(request):
     return redirect('login_form')
 
 
-"""
-
-
-
-class PostDetalhes(UpdateView):
-    template_name = 'posts/post_detalhes.html'
+@method_decorator(
+    login_required(
+        login_url='login_form', redirect_field_name='next'), name='dispatch')
+class DashboardView(ListView):
     model = Post
-    form_class = FormComentario
-    context_object_name = 'post'
+    paginate_by = 3
+    context_object_name = 'posts'
+    template_name = 'posts/dashboard.html'
 
-    def form_valid(self, form):
-        post = self.get_object()
-        comentario = Comentario(**form.cleaned_data)
-        comentario.post_comentario = post
-        if self.request.user.is_authenticated:
-            comentario.usuario_comentario = self.request.user
-        comentario.save()
-        messages.success(self.request, 'Comentario enviado com sucesso')
-        return redirect('post_detalhes', pk=post.id)
-
-    def get_context_data(self, **kwargs):
-        contexto = super().get_context_data(**kwargs)
-        post = self.get_object()
-        comentarios = Comentario.objects.filter(
-            publicado_comentario=True, post_comentario=post.id)
-
-        contexto['comentarios'] = comentarios
-        return contexto
-"""
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(autor_post=self.request.user, publicado_post=False)
+        return qs

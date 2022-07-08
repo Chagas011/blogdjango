@@ -9,47 +9,45 @@ class RegisterForm(forms.ModelForm):
     username = forms.CharField(
         label='Username',
         help_text=(
-            'Username must have letters, numbers or one of those @.+-_. '
-            'The length should be between 4 and 150 characters.'
+            'Coloque seu Username aqui'
         ),
         error_messages={
-            'required': 'This field must not be empty',
-            'min_length': 'Username must have at least 4 characters',
-            'max_length': 'Username must have less than 150 characters',
+            'required': 'Este campo é obrigatorio',
+            'min_length': 'Username precisa ter mais que 4 caracteres',
+            'max_length': 'Username precisa ter menos que 150 caracteres',
         },
         min_length=4, max_length=150,
     )
     first_name = forms.CharField(
-        error_messages={'required': 'Write your first name'},
-        label='First name'
+        error_messages={'required': 'Digite seu primeiro nome aqui'},
+        label='Primeiro nome'
     )
     last_name = forms.CharField(
-        error_messages={'required': 'Write your last name'},
-        label='Last name'
+        error_messages={'required': 'Digite seu ultimo nome aqui'},
+        label='Ultimo nome'
     )
     email = forms.EmailField(
-        error_messages={'required': 'E-mail is required'},
+        error_messages={'required': 'E-mail é obrigatorio'},
         label='E-mail',
-        help_text='The e-mail must be valid.',
     )
     password = forms.CharField(
         widget=forms.PasswordInput(),
         error_messages={
-            'required': 'Password must not be empty'
+            'required': 'A senha nao pode estar vazia'
         },
         help_text=(
-            'Password must have at least one uppercase letter, '
-            'one lowercase letter and one number. The length should be '
-            'at least 8 characters.'
+            'A senha deve ter pelo menos uma letra minuscula'
+            'uma maiuscula e um numero. O comprimeto da senha '
+            'deve ter pelo menos 8 caracteres'
         ),
         validators=[strong_password],
-        label='Password'
+        label='Senha'
     )
     password2 = forms.CharField(
         widget=forms.PasswordInput(),
-        label='Password2',
+        label='Confirme sua senha',
         error_messages={
-            'required': 'Please, repeat your password'
+            'required': 'Repita sua senha'
         },
     )
 

@@ -8,8 +8,8 @@
     <div class="mx-auto">
     <h1>Login</h1>
 {% if request.user.is_authenticated %}
-    <p> Voce esta logado com {{request.user.username}}. 
-         <a href="{% url 'logout' %}"> Clique aqui </a></p> para sair 
+<h5> <p> Voce esta logado com {{request.user.username}}. 
+    <a href="{% url 'logout' %}"> Clique aqui </a> para sair </p></h5>
 {% endif %}
 </div>
 </div>
