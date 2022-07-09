@@ -80,12 +80,9 @@ class RegisterForm(forms.ModelForm):
 
         if password != password2:
             password_confirmation_error = ValidationError(
-                'Password and password2 must be equal',
+                'Senhas nao conferem',
                 code='invalid'
             )
             raise ValidationError({
                 'password': password_confirmation_error,
-                'password2': [
-                    password_confirmation_error,
-                ],
             })

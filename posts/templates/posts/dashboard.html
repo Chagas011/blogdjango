@@ -15,7 +15,9 @@
     {% for post in posts %}
     
         <li class="nav-item">
-            {{post}}
+            <a href="{% url 'dashboard_update' post.id %}">
+                {{post}}
+            </a>
         </li>
     {% empty %}
     <li class="nav-item">

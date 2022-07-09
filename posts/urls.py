@@ -15,4 +15,6 @@ urlpatterns = [
     path('login/create', views.login_create, name='login_create'),
     path('logout', views.logout_view, name='logout'),
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
+    path('dashboard/post/<int:pk>',
+         views.DashboardUpdate.as_view(), name='dashboard_update'),
 ]

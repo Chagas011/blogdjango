@@ -1,18 +1,4 @@
-{% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% extends 'posts/index.html' %}
 {% block conteudo %}
-<form method="POST" action="#envia_post">
-    {% csrf_token %}
-        {% for invisivels in form.hidden_fields %}
-            {{invisivels}}
-        {% endfor %}
-    {% for visivel in form.visible_fields %}
-            {{visivel | as_crispy_field}}
-            {{visivel.errors}}
-
-    {% endfor %}
-            {% include  'partials/_messages.html' %}
-            <input id="envia_post" type="submit" class="btn btn-primary"
-                    value="Enviar">
-</form>
+{% include 'partials/_formulario.html' %}
 {% endblock conteudo %}

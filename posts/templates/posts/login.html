@@ -16,21 +16,7 @@
 
 
 {% if not request.user.is_authenticated %}
-<form method="POST" action="{{form_action}}">
-    {% csrf_token %}
-        {% for invisivels in form.hidden_fields %}
-            {{invisivels}}
-        {% endfor %}
-    {% for visivel in form.visible_fields %}
-            {{visivel | as_crispy_field}}
-            {{visivel.errors}}
-
-    {% endfor %}
-            {% include  'partials/_messages.html' %}
-            <input type="submit" class="btn btn-primary"
-                    value="Enviar">
-            
-</form>
+{% include 'partials/_formulario.html' %}
 <a href="{% url 'register' %}">
 <input type="submit" class="btn btn-primary mt-3" value="Registrar - se">
 </a>

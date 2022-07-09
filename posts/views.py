@@ -2,9 +2,10 @@
 
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic.list import ListView
+from django.views.generic.edit import UpdateView
 from django.views.generic.edit import FormView
 from .models import Post
 from .forms import FormPost
@@ -204,3 +205,12 @@ class DashboardView(ListView):
         qs = super().get_queryset()
         qs = qs.filter(autor_post=self.request.user, publicado_post=False)
         return qs
+
+
+class DashboardUpdate(UpdateView):
+    template_name = 'posts/dashboard_post.html'
+    model = Post
+    fields = ['titulo_post', 'conteudo_post',
+              'excerto_post', 'categoria_post',
+              'imagem_post']
+    success_url = reverse_lazy('dashboard')

@@ -4,10 +4,10 @@
 {% block conteudo %}
 
 <div class="container mb-3">
-
-    {% for post in posts %}
-
-    {% endfor %}
+    <h2 class="mx-auto"> Dashboard ({{user}})</h2>
+</div>
+<div class="container mb-3">
+    {% include 'partials/_formulario.html' %}
 </div>
 
 {% endblock conteudo %}
