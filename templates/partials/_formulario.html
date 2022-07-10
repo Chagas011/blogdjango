@@ -1,6 +1,6 @@
 
 {% load crispy_forms_tags %}
-<form method="POST" action="{{form_action}}">
+<form method="POST" action="{{form_action}}" enctype="multipart/form-data">
     {% csrf_token %}
         {% for invisivels in form.hidden_fields %}
             {{invisivels}}
