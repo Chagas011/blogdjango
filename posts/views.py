@@ -1,6 +1,4 @@
 
-
-from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -123,35 +121,96 @@ class PostFormulario(FormView):
         return redirect('post_index')
 
 
-def register_view(request):
-    register_form_data = request.session.get('register_form_data', None)
-    form = RegisterForm(register_form_data)
+class RegisterView(FormView):
+    template_name = 'posts/register_view.html'
 
-    return render(request, 'posts/register_view.html', context={
-        'form': form,
-        'form_action': reverse('register_create')
-    })
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.contexto = {
+            'form': RegisterForm(request.POST)
+        }
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.contexto)
 
-def register_create(request):
-    if not request.POST:
-        raise Http404()
+    def post(self, request, *args, **kwargs):
+        form = RegisterForm(request.POST)
 
-    POST = request.POST
-    request.session['register_form_data'] = POST
-    form = RegisterForm(POST)
+        if not form.is_valid():
+            return render(request, self.template_name, self.contexto)
 
-    if form.is_valid():
         user = form.save(commit=False)
         user.set_password(user.password)
         user.save()
         messages.success(request, 'Usuario criado com sucesso')
-        del(request.session['register_form_data'])
         return redirect(reverse('login_form'))
 
-    return redirect('register')
+
+class LoginView(FormView):
+    template_name = 'posts/login.html'
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.contexto = {
+            'form': LoginForm(request.POST)
+        }
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.contexto)
+
+    def post(self, request, *args, **kwargs):
+        form = LoginForm(request.POST)
+
+        if not form.is_valid():
+            messages.error(request, 'Dados invalidos')
+
+        authenticated_user = authenticate(
+            request,
+            username=form.cleaned_data.get('username', ''),
+            password=form.cleaned_data.get('password', ''),
+        )
+
+        if authenticated_user is not None:
+            messages.success(request, 'Logado com sucesso')
+            login(request, authenticated_user)
+            return redirect(reverse('dashboard'))
+        else:
+            messages.error(request, 'Usuario ou senha invalidos')
+
+        return render(request, self.template_name, self.contexto)
 
 
+@login_required(login_url='login_form', redirect_field_name='next')
+def logout_view(request):
+    logout(request)
+    return redirect('login_form')
+
+
+@method_decorator(
+    login_required(
+        login_url='login_form', redirect_field_name='next'), name='dispatch')
+class DashboardView(ListView):
+    model = Post
+    paginate_by = 3
+    context_object_name = 'posts'
+    template_name = 'posts/dashboard.html'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(autor_post=self.request.user, publicado_post=False)
+        return qs
+
+
+class DashboardUpdate(UpdateView):
+    template_name = 'posts/dashboard_post.html'
+    model = Post
+    fields = ['titulo_post', 'conteudo_post',
+              'excerto_post', 'categoria_post',
+              'imagem_post']
+    success_url = reverse_lazy('dashboard')
+
+
+"""
 def login_view(request):
     form = LoginForm()
     return render(request, 'posts/login.html', context={
@@ -185,32 +244,4 @@ def login_create(request):
 
     return redirect('login_form')
 
-
-@login_required(login_url='login_form', redirect_field_name='next')
-def logout_view(request):
-    logout(request)
-    return redirect('login_form')
-
-
-@method_decorator(
-    login_required(
-        login_url='login_form', redirect_field_name='next'), name='dispatch')
-class DashboardView(ListView):
-    model = Post
-    paginate_by = 3
-    context_object_name = 'posts'
-    template_name = 'posts/dashboard.html'
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.filter(autor_post=self.request.user, publicado_post=False)
-        return qs
-
-
-class DashboardUpdate(UpdateView):
-    template_name = 'posts/dashboard_post.html'
-    model = Post
-    fields = ['titulo_post', 'conteudo_post',
-              'excerto_post', 'categoria_post',
-              'imagem_post']
-    success_url = reverse_lazy('dashboard')
+"""
