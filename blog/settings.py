@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'posts',
     'categorias',
     'comentarios',
+    'perfil',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -160,7 +161,7 @@ CSRF_COOKIE_SECURE = True
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 AUTHENTICATION_BACKENDS = [
-    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list. # noqa
     'axes.backends.AxesBackend',
 
     # Django ModelBackend is the default authentication backend.
