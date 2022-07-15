@@ -1,0 +1,11 @@
+from .post_index import *  # noqa
+from .dashboard_update import *  # noqa
+from .dashboard_view import *  # noqa
+from .login_view import *  # noqa
+from .post_busca import *  # noqa
+from .post_categoria import *  # noqa
+from .post_detalhes import *  # noqa
+from .post_formulario import *  # noqa
+from .post_index import *  # noqa
+from .register_view import *  # noqa
+from .log_view import * # noqa

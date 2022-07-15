@@ -8,10 +8,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
-
+                {% if not request.user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login_form' %}">Login</a>
                 </li>
+                {% endif %}
+
+                {% if request.user.is_authenticated %} 
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'perfil' request.user.id%}">Perfil</a>
+                    </li>
+                {% endif %}
                 
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'post_categoria' 'python'%}">Python</a>

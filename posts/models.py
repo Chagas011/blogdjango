@@ -23,6 +23,7 @@ class PostsManager(models.Manager):
         return self.filter(
             Q(titulo_post__icontains=termo) |
             Q(autor_post__first_name__iexact=termo) |
+            Q(excerto_post__iexact=termo) |
             Q(conteudo_post__icontains=termo) |
             Q(categoria_post__nome_cat__iexact=termo)
         )
