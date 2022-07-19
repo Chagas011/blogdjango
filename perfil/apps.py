@@ -7,7 +7,7 @@ class PerfilConfig(AppConfig):
     name = 'perfil'
 
     def ready(self, *args, **kwargs):
-        import perfil.signals # noqa
+        import perfil.signals  # noqa
         super_ready = super().ready(*args, **kwargs)
 
         return super_ready

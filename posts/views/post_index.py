@@ -1,5 +1,5 @@
+from django.views.generic import ListView
 from posts.models import Post
-from django.views.generic.list import ListView
 
 
 class PostIndex(ListView):
