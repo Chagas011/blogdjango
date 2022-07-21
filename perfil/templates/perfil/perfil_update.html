@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+    <div class="container">
+        <h2>Perfil</h2>
+
+        <h5> <p> Voce esta logado com {{request.user.username}} . 
+            <a href="{% url 'dashboard' %}"> Clique aqui </a> para ir para sua Dashboard </p></h5>
+            <div class="container mb-3">
+                {% include 'partials/_formulario.html' %}
+            </div>
+        <p>{{perfil.bio}} </p>
+    </div>
+{% endblock conteudo %}
+
+

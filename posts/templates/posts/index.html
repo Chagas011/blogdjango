@@ -33,7 +33,9 @@
                     | 
                     {{post.numero_comentarios|plurar_comentarios }}
                     | 
-                    {{post.categoria_post}}    
+                    {{post.categoria_post}}
+                    |
+                    <a href="{% url 'perfila' post.autor_post.username%}">{{post.autor_post}}</a>
                 </small>
             </p>
 

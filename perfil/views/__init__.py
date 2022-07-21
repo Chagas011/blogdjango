@@ -1,1 +1,1 @@
-from .perfils import PerfilView # noqa
+from .perfils import * # noqa

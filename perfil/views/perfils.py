@@ -1,13 +1,14 @@
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
+from django.views.generic.edit import UpdateView
 from django.shortcuts import get_object_or_404
 from perfil.models import Perfils
+from django.urls import reverse_lazy
+from posts.models import Post
+# Isso sera um update view
 
 
-@method_decorator(
-    login_required(
-        login_url='login_form', redirect_field_name='next'), name='dispatch')
 class PerfilView(TemplateView):
     template_name = 'perfil/perfil.html'
 
@@ -20,5 +21,17 @@ class PerfilView(TemplateView):
 
         return self.render_to_response({
             **context,
-            'perfil': perfil
+            'perfil': perfil,
+            'posts': Post.objects.filter(
+                autor_post__username=perfil_username, publicado_post=True)
         })
+
+
+@method_decorator(
+    login_required(
+        login_url='login_form', redirect_field_name='next'), name='dispatch')
+class PerfilUpdate(UpdateView):
+    template_name = 'perfil/perfil_update.html'
+    model = Perfils
+    fields = ['bio']
+    success_url = reverse_lazy('perfil_update')
