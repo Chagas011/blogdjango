@@ -15,4 +15,5 @@ urlpatterns = [
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
     path('dashboard/post/<int:pk>',
          views.DashboardUpdate.as_view(), name='dashboard_update'),
+    path('posts/api/v1/', views.post_api_list, name='post_api_v1')
 ]

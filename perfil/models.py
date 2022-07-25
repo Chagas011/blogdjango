@@ -6,5 +6,5 @@ from django.contrib.auth.models import User
 
 class Perfils(models.Model):
 
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(default='', blank=True)

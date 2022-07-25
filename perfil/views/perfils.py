@@ -32,6 +32,14 @@ class PerfilView(TemplateView):
         login_url='login_form', redirect_field_name='next'), name='dispatch')
 class PerfilUpdate(UpdateView):
     template_name = 'perfil/perfil_update.html'
-    model = Perfils
     fields = ['bio']
     success_url = reverse_lazy('perfil_update')
+
+    def get(self, request, *args, **kwargs):
+        contexto = self.get_context_data(**kwargs)
+        perfil = get_object_or_404(Perfils)
+
+        return self.render_to_response({
+            **contexto,
+            'perfil': perfil,
+        })

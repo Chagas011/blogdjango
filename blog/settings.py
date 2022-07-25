@@ -33,6 +33,7 @@ ALLOWED_HOSTS: list = ['34.95.215.31']
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'posts',
     'categorias',
     'comentarios',
@@ -77,6 +78,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'blog.wsgi.application'
 
