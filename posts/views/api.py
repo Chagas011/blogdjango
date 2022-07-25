@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from ..models import Post
 from ..serializers import PostSerializer
-from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 @api_view()
@@ -15,14 +15,6 @@ def post_api_list(request):
 
 @api_view()
 def post_api_detail(request, pk):
-    post = Post.objects.get_published().filter(pk=pk).first()
-
-    if post:
-        serializer = PostSerializer(instance=post)
-        return Response(serializer.data)
-
-    else:
-
-        return Response({
-            'detail': 'Nada encontrado'
-        }, status=status.HTTP_404_NOT_FOUND)
+    post = get_object_or_404(Post, pk=pk)
+    serializer = PostSerializer(instance=post)
+    return Response(serializer.data)
