@@ -18,4 +18,6 @@ urlpatterns = [
     path('posts/api/v1/', views.post_api_list, name='post_api_v1'),
     path('posts/api/v1/<int:pk>/', views.post_api_detail,
          name='post_api_v1_detail'),
+    path('posts/api/v1/user/<int:pk>/', views.post_api_user,
+         name='post_api_v1_user'),
 ]
