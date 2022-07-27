@@ -17,7 +17,7 @@
 
                 {% if request.user.is_authenticated %} 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Perfil</a>
+                        <a class="nav-link" href="{% url 'perfil_update' user.perfils.pk %}">Perfil</a>
                     </li>
                 {% endif %}
                 
