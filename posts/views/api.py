@@ -5,26 +5,59 @@ from ..models import Post
 from ..serializers import PostSerializer, UserSerializer
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from rest_framework import status
 
 
-@api_view()
+@api_view(http_method_names=['get', 'post'])
 def post_api_list(request):
-    posts = Post.objects.get_published().select_related(
-        'categoria_post', 'autor_post')
-    serializer = PostSerializer(
-        instance=posts,
-        many=True,
-        context={'request': request},
-    )
-    return Response(serializer.data)
+    if request.method == 'GET':
+
+        posts = Post.objects.get_published().select_related(
+            'categoria_post', 'autor_post')
+        serializer = PostSerializer(
+            instance=posts,
+            many=True,
+            context={'request': request},
+        )
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = PostSerializer(
+            data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view()
+@api_view(['get', 'patch', 'delete'])
 def post_api_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk).select_related(
-        'categoria_post', 'autor_post')
-    serializer = PostSerializer(instance=post, context={'request': request})
-    return Response(serializer.data)
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'GET':
+        serializer = PostSerializer(
+            instance=post,
+            many=False,
+            context={'request': request})
+        return Response(serializer.data)
+
+    elif request.method == 'PATCH':
+        serializer = PostSerializer(
+            instance=post,
+            data=request.data,
+            many=False,
+            context={'request': request},
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    elif request.method == 'DELETE':
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view()
