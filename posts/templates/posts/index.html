@@ -2,6 +2,8 @@
 
 {% load humanize %}
 {% load filters %}
+{% block titulo %}Blog do Chagas {% endblock titulo %}
+
 {% block conteudo %}
 <h5 class="card-title p-3">
     <a href="{% url 'post_forms' %}">

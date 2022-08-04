@@ -82,6 +82,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'blog.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 4,
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
