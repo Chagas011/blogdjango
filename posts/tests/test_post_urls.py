@@ -1,6 +1,6 @@
 from django.test import TestCase
-from django.urls import reverse, resolve
-from views.post_index import PostIndex
+from django.urls import reverse
+
 # Create your tests here.
 
 
@@ -45,9 +45,3 @@ class PostURLSTest(TestCase):
     def test_post_dashboard_update_url(self):
         url = reverse('dashboard_update', kwargs={'pk': 1})
         self.assertEqual(url, '/dashboard/post/1')
-
-
-class PostViewsTest(TestCase):
-    def test_post_home_view(self):
-        view = resolve(reverse('post_index'))
-        self.assertIs(view.func.view_class, PostIndex)
