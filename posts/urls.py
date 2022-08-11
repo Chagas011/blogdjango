@@ -75,6 +75,9 @@ urlpatterns = [
 
 ]
 post_api_v1_router = SimpleRouter()
-post_api_v1_router.register('posts/api/v1', views.PostAPIv1ViewSet)
+post_api_v1_router.register(
+    'posts/api/v1',
+    views.PostAPIv1ViewSet,
+)
 
 urlpatterns += post_api_v1_router.urls

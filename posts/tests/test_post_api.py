@@ -1,14 +1,18 @@
-
+from .test_post_templates import PostViewTemplatesTest
+from rest_framework import test
 from posts.models import Post, User
 from categorias.models import Categoria
 
-from django.test import TestCase
-from django.urls import reverse
 
+class ApiPostTest(test.APITestCase, PostViewTemplatesTest):
+    def test_post_api_list(self):
+        api_url = '/posts/api/v1/'
+        response = self.client.get(api_url)
+        self.assertEqual(
+            response.status_code, 200
+        )
 
-class PostViewTemplatesTest(TestCase):
-
-    def test_post_view_template(self):
+    def make_post(self):
         categoria = Categoria.objects.create(nome_cat='TESTE')
         author = User.objects.create_user(
             first_name='usertes',
@@ -26,8 +30,11 @@ class PostViewTemplatesTest(TestCase):
             categoria_post=categoria,
             publicado_post=True
         )
-        response = self.client.get(reverse('post_index'))
-        contexto = response.context['posts']
-        content = response.content.decode('utf-8')
-        self.assertEqual(contexto.first().titulo_post, 'Post Test')
-        self.assertIn('Post Test', content)
+        return post
+
+    def test_post_api_list_load(self):
+        post = self.make_post()
+        api_url = '/posts/api/v1/'
+        response = self.client.get(api_url)
+
+        print(response.data)
